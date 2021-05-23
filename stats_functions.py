@@ -29,7 +29,7 @@ def t_score_to_p_value(t_score, sample_size):
     return p
 
 
-def sample_variance(data):
+def sample_variance(data):  # tested
     mean_val = mean(data)
     nums = [(d - mean_val) ** 2 for d in data]
     s_squared = sum(nums) / (len(data) - 1)
@@ -41,21 +41,21 @@ def coefficient_variation(args):
     return stdev(args) / mean(args)
 
 
-def covariance(list1, list2):
-    mean_1 = mean(list1)
-    mean_2 = mean(list2)
+def covariance(x, y):  # tested
+    mean_x = mean(x)
+    mean_y = mean(y)
 
-    nums = [(list1[i] - mean_1) * (list2[i] - mean_2) for i, _ in enumerate(list1)]
-    covariance = sum(nums) / (len(list1) - 1)
+    num = [(x[i] - mean_x) * (y[i] - mean_y) for i, _ in enumerate(x)]
 
-    return covariance
+    return sum(num) / (len(x) - 1)
 
 
-def correlation_coefficient(list_1, list_2):
-    s1 = stdev(list_1)
-    s2 = stdev(list_2)
+def correlation_coefficient(list_x, list_y):  # tested
 
-    return covariance(list_1, list_2) / (s1 * s2)
+    sx = stdev(list_x)
+    sy = stdev(list_y)
+
+    return covariance(list_x, list_y) / (sx * sy)
 
 
 def pearson_correlation_coefficient(list1, list2):
@@ -70,11 +70,11 @@ def pearson_correlation_coefficient(list1, list2):
     return r
 
 
-def fisher_approximation(pearsons_coeff):
+def fisher_approximation(pearsons_coeff):  # tested
     return 0.5 * math.log((1 + pearsons_coeff) / (1 - pearsons_coeff))
 
 
-def fisher_transformation(pearson_correlation_coeff, correlated, significance, sample_size):
+def fisher_transformation(pearson_correlation_coeff, correlated, significance, sample_size):  # tested
     r = pearson_correlation_coeff
     rho = correlated
     statistic = 0.5 * (math.log((1 + r) / (1 - r)) - math.log((1 + rho) / (1 - rho))) * math.sqrt(sample_size - 3)
@@ -135,7 +135,7 @@ def get_z_score(sample, population_mean):
     return (sample_mean - population_mean) / (sd / math.sqrt(sample_size))
 
 
-def t_critical_value(significance_value, dof, number_of_tails):
+def t_critical_value(significance_value, dof, number_of_tails):  # tested
     significance_value = significance_value / number_of_tails
     critical_value = abs(stats.t.ppf(significance_value, dof))
 
@@ -309,6 +309,19 @@ def residual(function, x_data, y_data):
     # x_data = [1, 2, 3]
     # y_data = [20, 30, 70]
     # function = lambda x, y: 25*x - 10 - y
+
+
+def find_expected_results(x, y):
+    total = sum(x) + sum(y)
+    row_tot = [sum(x), sum(y)]
+    col_tot = [x[i] + y[i] for i, _ in enumerate(x)]
+    out = [[col_tot[i] * row_tot[0]/total for i, _ in enumerate(x)],
+           [col_tot[i] * row_tot[1]/total for i, _ in enumerate(y)]]
+
+    print('Observed:', x + y)
+    print('Expected:', out[0] + out[1])
+
+    return out[0] + out[1]
 
 
 def paired_t_test(data_1, data_2, significance, no_tails):
