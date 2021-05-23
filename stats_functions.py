@@ -163,6 +163,7 @@ def bootstrap_confidence_interval(sample, significance):
 
 
 def chisquared_test(observed, expected, significance, dof):
+    print('Chi squared test:')
     x = chisquare(observed, f_exp=expected)
     test_stat = x[0]
     pvalue = x[1]
@@ -213,6 +214,7 @@ def xbar(sample_data, groupings):
 
 
 def poisson_distribution(sample, groupings):
+    print('Poisson distribution:')
     mu = xbar(sample, groupings)[1]
     total = xbar(sample, groupings)[0]
     expected = []
@@ -220,6 +222,7 @@ def poisson_distribution(sample, groupings):
         p = math.exp(-mu) * (mu ** i) / math.factorial(i)
         expected.append(round(p * total, 4))
 
+    print(expected)
     return expected
 
     # example
@@ -228,6 +231,7 @@ def poisson_distribution(sample, groupings):
 
 
 def normal_distribution(data, values_upper_bounds, mean, standard_deviation):
+    print('Normal distribution:')
     expected = []
     prior_p = 0
     for i, value in enumerate(values_upper_bounds):
@@ -242,6 +246,7 @@ def normal_distribution(data, values_upper_bounds, mean, standard_deviation):
         prior_p = cumulative_p_value
         expected.append(p_value * sum(data))
 
+    print(expected)
     return expected
 
     # example format
@@ -252,6 +257,7 @@ def normal_distribution(data, values_upper_bounds, mean, standard_deviation):
 
 
 def binomial_distribution(probability_success, n_trials, x_outcomes):
+    print('Binomial distrubution:')
     p = probability_success
     q = 1 - p
     n = n_trials
@@ -264,6 +270,7 @@ def binomial_distribution(probability_success, n_trials, x_outcomes):
 
 def binomial_hypothesis(no_tails, significance, probability_success, n_trials, x_outcomes):
     probability = sum(binomial_distribution(probability_success, n_trials, x_outcomes)) * no_tails
+    print('Binomial hypothesis:')
     if probability <= significance:
         print('Reject the null hypothesis')
     else:
@@ -273,6 +280,7 @@ def binomial_hypothesis(no_tails, significance, probability_success, n_trials, x
 
 
 def goodness_of_fit(observed, expected, significance, dof):
+    print('Goodness-of-fit:')
     confidence = 1 - significance
     critical_value = chi2_critical_value(confidence, dof)
     statistic, pvalue = chisquared_test(observed, expected, significance, dof)
@@ -303,14 +311,15 @@ def residual(function, x_data, y_data):
     # function = lambda x, y: 25*x - 10 - y
 
 
-def paired_t_test(data_1, data_2):
+def paired_t_test(data_1, data_2, significance, no_tails):
+    print('Paired T test:')
     difference = [data_1[i] - data_2[i] for i, _ in enumerate(data_1)]
 
     x_bar = mean(difference)
     sd = math.sqrt(sample_variance(difference))
 
     test_stat = t_statistic(0, x_bar, sd, len(data_1))
-    t_crit = t_critical_value(0.05, len(data_1) - 1, 2)
+    t_crit = t_critical_value(significance, len(data_1) - 1, no_tails)
 
     if test_stat < t_crit:
         print("Accept null hypothesis. Mu = 0. No difference")
@@ -336,5 +345,6 @@ def linear_regression(x_data, y_data):
     eq1 = Eq(a * n + b * x_i, y_i)
     eq2 = Eq(a * x_i + b * x_squared, xy_i)
     regression_coeff = solve([eq1, eq2], (a, b))
+
     print('Regression line:')
     print(f'y = {regression_coeff[a]} + {regression_coeff[b]}x\n')
