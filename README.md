@@ -1,5 +1,5 @@
 # engmaths2
-consists of 3 main files that correspond with the engineering mathematics 2 unit:
+Consists of 3 main files that correspond with the Engineering Mathematics 2 Unit:
 
 Vector Calculus
  - curl and divergence
