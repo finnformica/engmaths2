@@ -4,7 +4,9 @@ from statistics import variance, stdev, mean, median
 import math
 
 from random import choices
-from sympy import binomial
+from sympy import binomial, Eq, solve, symbols
+
+a, b = symbols('a, b')
 
 
 def p_value_to_z_score(p_value):
@@ -175,6 +177,8 @@ def chisquared_test(observed, expected, significance, dof):
     print(f'Test statistic = {test_stat}')
     print(f'Critical value = {critical_value}\n')
 
+    return test_stat, pvalue
+
 
 def chi2_critical_value(confidence, dof):
     chi2_critical = chi2.ppf(confidence, dof)
@@ -185,7 +189,7 @@ def independence_test(significance_value, data):  # data takes two sets of value
     stat, p, dof, expected = chi2_contingency(data)
     # interpret p-value
     print("p value is " + str(p))
-    critical = chi2_critical_value(1-significance_value, dof)
+    critical = chi2_critical_value(1 - significance_value, dof)
     print("Critical value is {}. Test statisitic is {}. Therefore".format(critical, stat))
     if p <= significance_value:
         print('Dependent - reject null hypothesis')
@@ -271,9 +275,9 @@ def binomial_hypothesis(no_tails, significance, probability_success, n_trials, x
 def goodness_of_fit(observed, expected, significance, dof):
     confidence = 1 - significance
     critical_value = chi2_critical_value(confidence, dof)
-    statistic, pvalue = chisquared_test(observed, expected, significance)
+    statistic, pvalue = chisquared_test(observed, expected, significance, dof)
 
-    print('Statistic:', statistic)
+    print('Test statistic:', statistic)
     print('Critical value:', critical_value, '\n')
 
 
@@ -320,3 +324,17 @@ def paired_t_test(data_1, data_2):
     # mu is the mean differences between the sets of values
     # data1 = [140, 190, 50, 80]
     # data2 = [145, 192, 62, 87]
+
+
+def linear_regression(x_data, y_data):
+    x_i = sum(x_data)
+    y_i = sum(y_data)
+    x_squared = sum([x**2 for x in x_data])
+    xy_i = sum([x_data[i] * y_data[i] for i, _ in enumerate(x_data)])
+    n = len(x_data)
+
+    eq1 = Eq(a * n + b * x_i, y_i)
+    eq2 = Eq(a * x_i + b * x_squared, xy_i)
+    regression_coeff = solve([eq1, eq2], (a, b))
+    print('Regression line:')
+    print(f'y = {regression_coeff[a]} + {regression_coeff[b]}x\n')
