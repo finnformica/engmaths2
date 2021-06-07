@@ -6,7 +6,7 @@ from sympy.vector import ParametricRegion, vector_integrate
 from sympy import *
 init_printing()
 
-x, y, z, i, j, k, t, u, v, a, b, c = sym.symbols('x y z i j k t u v a b c')
+x, y, z, i, j, k, t, u, v, a, b, c, r, theta = sym.symbols('x y z i j k t u v a b c r theta')
 
 
 def magnitude(vector):
@@ -305,9 +305,9 @@ def triple_integral(function, order_of_xyz, first_bounds, second_bounds, third_b
     # third_bounds = [0, 3]
 
 
-def parametrised_normal(surface):
+def parametrised_normal(surface, direction=1):
     du = [sym.diff(surface[i], u) for i, _ in enumerate(surface)]
-    dv = [sym.diff(surface[i], v) for i, _ in enumerate(surface)]
+    dv = [sym.diff(surface[i], v) * direction for i, _ in enumerate(surface)]
     return cross_product(du, dv)
 
 
@@ -319,10 +319,15 @@ def flux_integral(vector, surface, u_bounds, v_bounds):
     r_u = partial_differential_vector(surface, u)
     r_v = partial_differential_vector(surface, v)
 
+    vector_parametrised = []
+    for variable in vector:
+        vector_parametrised.append(variable.subs({x: surface[0], y: surface[1], z: surface[2]}))
+
     dA = cross_product(r_u, r_v)
     integral = dot_product(vector, dA)
     flux = double_integral(integral, u, u_bounds, v, v_bounds)
     return flux
+
     # example formatting
     # vector = [3*u**2, v**2, 0]
     # surface = [u, v, 2*u + 3*v]
@@ -356,6 +361,25 @@ def stokes(line_c, vector_field, u_bounds, v_bounds):
     return solution
 
 
+def gauss(vector_field, r_bounds, u_bounds, v_bounds, parameterised):
+    div = divergence(vector_field)
+    subs = div.subs({x: parameterised[0], y: parameterised[1], z: parameterised[2]})
+    simplified = sym.simplify(subs)
+    changed = jacobian(parameterised, [r, u, v])
+    integral = simplified * changed
+    print(integral)
+    ans = sym.integrate(integral, (r, r_bounds[0], r_bounds[1]), (u, u_bounds[0], u_bounds[1]),
+                        (v, v_bounds[0], v_bounds[1]))
+    return ans
+    # example : this is for spherical polar co-ordinates
+    # r_bounds = [0, 1]
+    # u_bounds = [0, pi]
+    # v_bounds = [0, 2*pi]
+    # vector_field = [x*y**2, y*cos(z)+y*z**2, x**2*z-sin(z)]
+    # parameterised = [r * sin(u) * cos(v), r * sin(u) * sin(v), r * cos(u)]
+    # If integral is in x, y, z give param as : [r, u, v]
+
+
 def determinant(mat):
     if len(mat) == 2:
         c = mat[0][0]*mat[1][1]-mat[1][0]*mat[0][1]
@@ -368,10 +392,8 @@ def determinant(mat):
         return c
 
 
-def jacobian(x, y, z, variables):
-    term = [x, y, z]
+def jacobian(term, variables):
     jacob = []
-
     for i in range(3):
         new_row = []
         differential = term[i]
@@ -380,4 +402,6 @@ def jacobian(x, y, z, variables):
             new_row.append(value)
         jacob.append(new_row)
 
-    return sym.simplify(determinant(jacob))
+    det = determinant(jacob)
+    det_1 = sym.simplify(det)
+    return det_1

@@ -162,7 +162,7 @@ def bootstrap_confidence_interval(sample, significance):
     return confidence_interval
 
 
-def chisquared_test(observed, expected, significance, dof):
+def chisquared_test(observed, expected, significance, dof):  # tested
     print('Chi squared test:')
     x = chisquare(observed, f_exp=expected)
     test_stat = x[0]
@@ -293,13 +293,15 @@ def statistically_significant(significance, sample1_size, sample1_mean, sample1_
                               sample2_size, sample2_mean, sample2_sd, number_of_tails):
     global_deviation = math.sqrt(sample1_sd**2/sample1_size + sample2_sd**2/sample2_size)
     test_statistic = abs(sample1_mean - sample2_mean)/global_deviation
-    critical_value = t_critical_value(significance, sample2_size-1, number_of_tails)
+    critical_value = t_critical_value(significance, sample2_size - 1, number_of_tails)
 
     if test_statistic < critical_value:
-        print("Null hypothesis cannot be rejected")
+        print('Cannot reject the null hypothesis')
     else:
-        print("Null hypothesis can be rejected")
-    print("Test statistic is: {}. Critical value is {}.".format(test_statistic, critical_value))
+        print('Reject the null hypothesis')
+
+    print(f'Test statistic: {test_statistic}')
+    print(f'Critical value: {critical_value}')
 
 
 def residual(function, x_data, y_data):
@@ -319,7 +321,7 @@ def find_expected_results(x, y):
            [col_tot[i] * row_tot[1]/total for i, _ in enumerate(y)]]
 
     print('Observed:', x + y)
-    print('Expected:', out[0] + out[1])
+    print('Expected:', out[0] + out[1], '\n')
 
     return out[0] + out[1]
 
@@ -333,6 +335,7 @@ def paired_t_test(data_1, data_2, significance, no_tails):
 
     test_stat = t_statistic(0, x_bar, sd, len(data_1))
     t_crit = t_critical_value(significance, len(data_1) - 1, no_tails)
+    print(t_crit)
 
     if test_stat < t_crit:
         print("Accept null hypothesis. Mu = 0. No difference")

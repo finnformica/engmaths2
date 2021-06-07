@@ -16,3 +16,4 @@ a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z, th
 pprint(theta)
 print('\n')
 
+pdf.line_spectrum(lambda w: 1/(2*pi**2) if w == 0 else 0, lambda w: cos(w*pi/2)/(pi**2*w**2) if w != 0 else 0)

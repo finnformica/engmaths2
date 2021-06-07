@@ -257,7 +257,8 @@ def initial_value_problems_laplace(pde, right_side, x0, dx0):
     transfer = pde[0] * df2 + pde[1] * df1 + pde[2] * F - s_domain
     ans = sym.solve(transfer, F)
     function = inverse_laplace_transform(ans[0])
-    print(function.evalf().simplify().expand())
+    pprint(function.evalf().simplify().expand())
+
     return function
 
     # example format
@@ -303,7 +304,10 @@ def line_spectrum(a_n, b_n):
     # a_n = lambda n: 0
     # b_n = lambda n: ((-2) * (-1) ** n) / (n * sym.pi) if n != 0 else 0
 
-    omega = np.arange(-10, 10, 0.1, dtype=float)
+    limit = 10
+    step = 1
+
+    omega = np.arange(-limit, limit, step, dtype=float)  # change the limits and step size if errors
 
     y = [float(abs(0.5 * sym.sqrt(a_n(n) ** 2 + b_n(n) ** 2))) for n in omega]
 
@@ -311,6 +315,6 @@ def line_spectrum(a_n, b_n):
     ax1.plot(omega, y)
     ax1.set_title('Magnitude Spectrum')
 
-    ax2.stem(omega[::8], y[::8])
+    ax2.stem(omega[::], y[::])
     ax2.set_title('Line Spectrum')
     plt.show()
